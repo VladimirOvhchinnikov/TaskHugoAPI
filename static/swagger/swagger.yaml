@@ -1,0 +1,36 @@
+paths:
+    /api:
+        get:
+            operationId: handleAll
+            responses:
+                "200":
+                    $ref: '#/responses/allResponse'
+            summary: handleAll возвращает общую информацию.
+            tags:
+                - address
+    /api/address/geocode:
+        get:
+            operationId: handleGeocode
+            responses:
+                "200":
+                    $ref: '#/responses/geocodeResponse'
+            summary: handleGeocode выполняет геокодирование адреса.
+            tags:
+                - address
+    /api/address/search:
+        get:
+            operationId: handleSearch
+            responses:
+                "200":
+                    $ref: '#/responses/searchResponse'
+            summary: handleSearch выполняет поиск адреса.
+            tags:
+                - address
+responses:
+    allResponse:
+        description: ""
+    geocodeResponse:
+        description: ""
+    searchResponse:
+        description: ""
+swagger: "2.0"
