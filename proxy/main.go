@@ -1,14 +1,41 @@
 package main
 
 import (
+	"context"
+	"log"
 	"net/http"
-
-	"github.com/go-chi/chi"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func main() {
+	router := SetupRouter()
 
-	var router *chi.Mux = SetupRouter()
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
 
-	http.ListenAndServe(":8080", router)
+	// Запуск сервера в отдельной горутине
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// Ожидание сигнала для graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	// Контекст с таймаутом для завершения работы сервера
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Завершение работы сервера
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Server Shutdown Failed:%+v", err)
+	}
+	log.Println("Server Exited Properly")
 }

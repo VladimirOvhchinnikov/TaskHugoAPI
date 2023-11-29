@@ -1,3 +1,7 @@
+definitions:
+    LogPas:
+        title: LogPas определяет структуру входных данных для авторизации пользователя.
+        x-go-package: hugo/proxy
 paths:
     /api:
         get:
@@ -26,11 +30,40 @@ paths:
             summary: handleSearch выполняет поиск адреса.
             tags:
                 - address
+    /login:
+        post:
+            description: |-
+                Параметры:
+                + name: body
+                in: body
+                required: true
+                schema:
+                "$ref": "#/definitions/LogPas"
+
+                Ответы:
+                200: jwtResponse
+                400: badRequestResponse
+                500: internalServerErrorResponse
+                401: unauthorizedResponse
+            operationId: handleLogin
+            summary: |-
+                handleLogin авторизует пользователя и возвращает JWT токен.
+                При успешной авторизации возвращает токен, иначе сообщение об ошибке.
+            tags:
+                - login
 responses:
     allResponse:
         description: ""
+    badRequestResponse:
+        description: badRequestResponse описывает ответ на неверный запрос.
     geocodeResponse:
         description: ""
+    internalServerErrorResponse:
+        description: internalServerErrorResponse описывает ответ сервера на внутреннюю ошибку.
+    jwtResponse:
+        description: JwtResponse определяет структуру ответа с JWT токеном.
     searchResponse:
         description: ""
+    unauthorizedResponse:
+        description: unauthorizedResponse описывает ответ сервера на неавторизованный запрос.
 swagger: "2.0"
